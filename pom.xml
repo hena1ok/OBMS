@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	
+
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- Spring Boot Parent -->
@@ -18,7 +18,8 @@
 	<artifactId>bank-management-system</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>OnlineBankManagementSystem</name>
-	<description>Online Bank Management System for managing users, accounts, transactions, loans, and more.</description>
+	<description>Online Bank Management System for managing users, accounts,
+		transactions, loans, and more.</description>
 	<url>http://www.example.com/obms</url>
 
 	<!-- Properties -->
@@ -34,14 +35,14 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 			<version>3.3.2</version>
 		</dependency>
-		
+
 		<!-- Spring Boot Starter Security -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 			<version>3.3.2</version>
 		</dependency>
-		
+
 		<!-- Spring Boot Starter Web -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -49,13 +50,24 @@
 			<version>3.3.2</version>
 		</dependency>
 
-	
-	<!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
-<dependency>
-    <groupId>com.mysql</groupId>
-    <artifactId>mysql-connector-j</artifactId>
-    <version>9.0.0</version>
-</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<version>9.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+			<version>3.0.2</version> <!-- Check for the latest version -->
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>8.0.0.Final</version> <!-- Check for the latest version -->
+		</dependency>
 
 
 		<!-- H2 Database for Testing/Development -->
@@ -127,7 +139,8 @@
 	</developers>
 	<scm>
 		<connection>scm:git:git://example.com/bank-management-system.git</connection>
-		<developerConnection>scm:git:ssh://example.com/bank-management-system.git</developerConnection>
+		<developerConnection>
+			scm:git:ssh://example.com/bank-management-system.git</developerConnection>
 		<tag>HEAD</tag>
 		<url>http://example.com/bank-management-system</url>
 	</scm>

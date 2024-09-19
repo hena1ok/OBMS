@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Validation Error</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Validation Error</h1>
+        <div th:each="error : ${errors}">
+            <p th:text="${error.defaultMessage}"></p>
+        </div>
+        <a href="/transactions/new" class="btn btn-primary">Go Back</a>
+    </div>
+</body>
+</html>
