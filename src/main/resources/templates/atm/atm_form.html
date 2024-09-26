@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATM Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+        .form-container {
+            margin-top: 50px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mt-5 mb-4">ATM Form</h1>
+
+        <div class="form-container">
+            <form th:action="@{/atm/createOrUpdate}" th:object="${atm}" method="post" class="needs-validation" novalidate>
+                <!-- Location Field -->
+                <div class="mb-3">
+                    <label for="location" class="form-label">Location</label>
+                    <input type="text" class="form-control" id="location" th:field="*{location}" placeholder="Enter ATM location" required>
+                </div>
+
+                <!-- Cash Available Field -->
+                <div class="mb-3">
+                    <label for="cashAvailable" class="form-label">Cash Available</label>
+                    <input type="number" class="form-control" id="cashAvailable" th:field="*{cashAvailable}" placeholder="Enter available cash" min="0" required>
+                </div>
+
+                <!-- Max Withdrawal Per Transaction Field -->
+                <div class="mb-3">
+                    <label for="maxWithdrawalPerTransaction" class="form-label">Max Withdrawal Per Transaction</label>
+                    <input type="number" class="form-control" id="maxWithdrawalPerTransaction" th:field="*{maxWithdrawalPerTransaction}" placeholder="Enter max withdrawal" min="0" required>
+                </div>
+
+                <!-- Daily Withdrawal Limit Field -->
+                <div class="mb-3">
+                    <label for="dailyWithdrawalLimit" class="form-label">Daily Withdrawal Limit</label>
+                    <input type="number" class="form-control" id="dailyWithdrawalLimit" th:field="*{dailyWithdrawalLimit}" placeholder="Enter daily limit" min="0" required>
+                </div>
+
+                <!-- Status Field -->
+                <div class="mb-3">
+                    <label for="status" class="form-label">Status</label>
+                    <select class="form-select" id="status" th:field="*{status}" required>
+                        <option value="" disabled selected>Select status</option>
+                        <option value="online">Online</option>
+                        <option value="offline">Offline</option>
+                        <option value="maintenance">Maintenance</option>
+                    </select>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">Save ATM</button>
+                </div>
+            </form>
+
+            <!-- Back Button -->
+            <div class="text-center mt-3">
+                <a href="/atm/list" class="btn btn-secondary">Back to ATM List</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
