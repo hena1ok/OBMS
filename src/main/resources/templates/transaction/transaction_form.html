@@ -2,65 +2,88 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Transaction Form</title>
+    <title th:text="${transaction.id} == null ? 'Create Transaction' : 'Edit Transaction'"></title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .form-container {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        h2 {
+            margin-bottom: 1.5rem;
+        }
+    </style>
 </head>
 <body>
+<!-- Include the header -->
+<div th:replace="fragments/header"></div>
+
 <div class="container mt-5">
-    <h2 th:text="${transaction.id} == null ? 'Create Transaction' : 'Edit Transaction'"></h2>
-    <form th:action="@{${transaction.id} == null ? '/transaction/create' : '/transaction/update/' + ${transaction.id}}" 
-          th:object="${transaction}" method="post">
-        <input type="hidden" th:field="*{id}" />
+    <div class="form-container">
+        <h2 th:text="${transaction.id} == null ? 'Create Transaction' : 'Edit Transaction'"></h2>
+        <form th:action="@{${transaction.id} == null ? '/transaction/create' : '/transaction/update/' + ${transaction.id}}"
+              th:object="${transaction}" method="post" novalidate>
+            <input type="hidden" th:field="*{id}" />
 
-        <div class="form-group">
-            <label for="amount">Amount:</label>
-            <input type="number" step="0.01" class="form-control" th:field="*{amount}" required />
-            <div class="invalid-feedback" th:if="${#fields.hasErrors('amount')}">
-                <span th:errors="*{amount}"></span>
+            <div class="form-group">
+                <label for="amount">Amount:</label>
+                <input type="number" step="0.01" class="form-control" th:field="*{amount}" required />
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('amount')}">
+                    <span th:errors="*{amount}"></span>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            <label for="date">Date:</label>
-            <input type="date" class="form-control" th:field="*{date}" required />
-            <div class="invalid-feedback" th:if="${#fields.hasErrors('date')}">
-                <span th:errors="*{date}"></span>
+            <div class="form-group">
+                <label for="date">Date:</label>
+                <input type="date" class="form-control" th:field="*{date}" required />
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('date')}">
+                    <span th:errors="*{date}"></span>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            <label for="description">Description:</label>
-            <textarea class="form-control" th:field="*{description}"></textarea>
-        </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea class="form-control" th:field="*{description}" rows="3"></textarea>
+            </div>
 
-        <div class="form-group">
-            <label for="sourceAccount">Source Account:</label>
-            <select class="form-control" th:field="*{sourceAccount.id}" required>
-                <option th:each="account : ${accounts}" th:value="${account.id}" th:text="${account.accountNumber}"></option>
-            </select>
-        </div>
+            <div class="form-group">
+                <label for="sourceAccount">Source Account:</label>
+                <select class="form-control" th:field="*{sourceAccount.id}" required>
+                    <option value="" disabled selected>Select an account</option>
+                    <option th:each="account : ${accounts}" th:value="${account.id}" th:text="${account.accountNumber}"></option>
+                </select>
+            </div>
 
-        <div class="form-group">
-            <label for="destinationAccount">Destination Account:</label>
-            <select class="form-control" th:field="*{destinationAccount.id}" required>
-                <option th:each="account : ${accounts}" th:value="${account.id}" th:text="${account.accountNumber}"></option>
-            </select>
-        </div>
+            <div class="form-group">
+                <label for="destinationAccount">Destination Account:</label>
+                <select class="form-control" th:field="*{destinationAccount.id}" required>
+                    <option value="" disabled selected>Select an account</option>
+                    <option th:each="account : ${accounts}" th:value="${account.id}" th:text="${account.accountNumber}"></option>
+                </select>
+            </div>
 
-        <div class="form-group">
-            <label for="user">User:</label>
-            <select class="form-control" th:field="*{user.id}" required>
-                <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.username}"></option>
-            </select>
-        </div>
+            <div class="form-group">
+                <label for="user">User:</label>
+                <select class="form-control" th:field="*{user.id}" required>
+                    <option value="" disabled selected>Select a user</option>
+                    <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.username}"></option>
+                </select>
+            </div>
 
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <a th:href="@{/transaction/transaction_list}" class="btn btn-secondary">Cancel</a>
-    </form>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Submit</button>
+            <a th:href="@{/transaction/transaction_list}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancel</a>
+        </form>
+    </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Include the footer -->
+<div th:replace="fragments/footer"></div>
+
 </body>
 </html>

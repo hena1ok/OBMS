@@ -8,6 +8,9 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
         }
         .hero {
             background: url('https://images.unsplash.com/photo-1541991977-9740b89f1efb') no-repeat center center;
@@ -18,149 +21,150 @@
             justify-content: center;
             align-items: center;
             text-align: center;
+            position: relative;
+            margin-bottom: 2rem; /* Added margin below hero section */
+        }
+        .hero h1 {
+            font-size: 3rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+        .hero p {
+            font-size: 1.5rem;
+            margin: 20px 0;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
         }
         .feature-icon {
             font-size: 50px;
         }
+        .card {
+            transition: transform 0.2s; /* Smooth hover effect */
+        }
+        .card:hover {
+            transform: translateY(-5px); /* Raise card on hover */
+        }
     </style>
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="#">Bank Management System</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#services">Services</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#atm">ATM</a> <!-- Added ATM section -->
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#about">About Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#contact">Contact</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <!-- Include Header -->
+    <div th:replace="fragments/header.html"></div>
 
     <!-- Hero Section -->
-    <header class="hero">
+    <div class="hero">
         <div class="container">
             <h1>Welcome to Our Bank</h1>
             <p>Your trusted partner in financial growth.</p>
             <a href="#services" class="btn btn-primary btn-lg">Explore Our Services</a>
         </div>
-    </header>
+    </div>
 
-    <!-- Services Section -->
-    <section id="services" class="py-5 bg-light">
-        <div class="container">
-            <h2 class="text-center">Our Services</h2>
-            <div class="row text-center">
-                <div class="col-md-4">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <div class="feature-icon text-primary">&#128179;</div>
-                            <h5 class="card-title">Personal Banking</h5>
-                            <p class="card-text">Manage your personal accounts with ease and enjoy tailored financial solutions.</p>
-                            <a href="/account/account_list" class="btn btn-secondary">View Accounts</a> <!-- Link to Accounts -->
+    <!-- Main Content -->
+    <main>
+        <!-- Services Section -->
+        <section id="services" class="py-5">
+            <div class="container">
+                <h2 class="text-center">Our Services</h2>
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-body">
+                                <div class="feature-icon text-primary">&#128179;</div>
+                                <h5 class="card-title">Personal Banking</h5>
+                                <p class="card-text">Manage your personal accounts with ease and enjoy tailored financial solutions.</p>
+                                <a href="/account/account_list" class="btn btn-secondary">View Accounts</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <div class="feature-icon text-success">&#128179;</div>
-                            <h5 class="card-title">Business Banking</h5>
-                            <p class="card-text">Grow your business with our specialized banking services designed for entrepreneurs.</p>
-                            <a href="/account/account_list" class="btn btn-secondary">View Accounts</a> <!-- Link to Accounts -->
+                    <div class="col-md-4">
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-body">
+                                <div class="feature-icon text-success">&#128179;</div>
+                                <h5 class="card-title">Business Banking</h5>
+                                <p class="card-text">Grow your business with our specialized banking services designed for entrepreneurs.</p>
+                                <a href="/account/account_list" class="btn btn-secondary">View Accounts</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <div class="feature-icon text-warning">&#128184;</div>
-                            <h5 class="card-title">Loans and Mortgages</h5>
-                            <p class="card-text">Access a variety of loan options to meet your needs, with flexible terms and low rates.</p>
+                    <div class="col-md-4">
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-body">
+                                <div class="feature-icon text-warning">&#128184;</div>
+                                <h5 class="card-title">Loans and Mortgages</h5>
+                                <p class="card-text">Access a variety of loan options to meet your needs, with flexible terms and low rates.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-body">
+                                <div class="feature-icon text-success">&#128179;</div>
+                                <h5 class="card-title">Branches</h5>
+                                <p class="card-text">Grow your business with multiple branches.</p>
+                                <a href="/branch/list" class="btn btn-secondary">View Branches</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- ATM Section -->
-    <section id="atm" class="py-5 bg-light">
-        <div class="container">
-            <h2 class="text-center">ATM Management</h2>
-            <div class="row text-center">
-                <div class="col-md-6">
-                    <a href="/atm/list" class="btn btn-primary btn-lg">View ATM Locations</a> <!-- Link to ATM List -->
-                </div>
-                <div class="col-md-6">
-                    <a href="/atm/form" class="btn btn-success btn-lg">Add New ATM</a> <!-- Link to Create ATM -->
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Account and Transaction Section -->
-    <section id="account-transaction" class="py-5">
-        <div class="container">
-            <h2 class="text-center">Account & Transaction Services</h2>
-            <div class="text-center">
-                <a href="/transaction/transaction_list" class="btn btn-primary btn-lg">View Transactions</a>
-                <a href="/account/account_form" class="btn btn-success btn-lg">Open New Account</a> <!-- Updated path -->
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="py-5">
-        <div class="container">
-            <h2 class="text-center">About Us</h2>
-            <p class="text-center">Established in 2023, our bank aims to provide innovative banking solutions to help our customers achieve their financial goals. We prioritize customer satisfaction and strive to deliver an exceptional banking experience.</p>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="py-5 bg-light">
-        <div class="container">
-            <h2 class="text-center">Contact Us</h2>
-            <form>
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <input type="text" class="form-control" placeholder="Your Name" required>
+        <!-- ATM Section -->
+        <section id="atm" class="py-5">
+            <div class="container">
+                <h2 class="text-center">ATM Management</h2>
+                <div class="row text-center">
+                    <div class="col-md-6 mb-3">
+                        <a href="/atm/list" class="btn btn-primary btn-lg">View ATM Locations</a>
                     </div>
-                    <div class="col-md-6">
-                        <input type="email" class="form-control" placeholder="Your Email" required>
+                    <div class="col-md-6 mb-3">
+                        <a href="/atm/form" class="btn btn-success btn-lg">Add New ATM</a>
                     </div>
                 </div>
-                <div class="mb-3">
-                    <textarea class="form-control" placeholder="Your Message" rows="4" required></textarea>
+            </div>
+        </section>
+
+        <!-- Account and Transaction Section -->
+        <section id="account-transaction" class="py-5">
+            <div class="container">
+                <h2 class="text-center">Account & Transaction Services</h2>
+                <div class="text-center">
+                    <a href="/transaction/transaction_list" class="btn btn-primary btn-lg">View Transactions</a>
+                    <a href="/account/account_form" class="btn btn-success btn-lg">Open New Account</a>
                 </div>
-                <button type="submit" class="btn btn-primary">Send Message</button>
-            </form>
-        </div>
-    </section>
+            </div>
+        </section>
 
-    <!-- Footer -->
-    <footer class="text-center py-4">
-        <p>&copy; 2023 Bank Management System | All Rights Reserved</p>
-    </footer>
+        <!-- About Section -->
+        <section id="about" class="py-5">
+            <div class="container">
+                <h2 class="text-center">About Us</h2>
+                <p class="text-center">Established in 2023, our bank aims to provide innovative banking solutions to help our customers achieve their financial goals. We prioritize customer satisfaction and strive to deliver an exceptional banking experience.</p>
+            </div>
+        </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+        <!-- Contact Section -->
+        <section id="contact" class="py-5 bg-light">
+            <div class="container">
+                <h2 class="text-center">Contact Us</h2>
+                <form>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" placeholder="Your Name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="email" class="form-control" placeholder="Your Email" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <textarea class="form-control" placeholder="Your Message" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Include Footer -->
+    <div th:replace="fragments/footer.html"></div>
+
+   </body>
 </html>

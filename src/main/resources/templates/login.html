@@ -1,11 +1,30 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .card-title {
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
+    <!-- Include Header -->
+    <div th:replace="fragments/header.html"></div>
+
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6">
@@ -30,5 +49,9 @@
             </div>
         </div>
     </div>
-</body>
+
+    <!-- Include Footer -->
+    <div th:replace="fragments/footer.html"></div>
+
+ </body>
 </html>

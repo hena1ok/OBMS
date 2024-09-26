@@ -14,16 +14,16 @@ import jakarta.validation.Valid;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/branches")
+@RequestMapping("/branch")
 public class BranchController {
 
     @Autowired
     private BranchService branchService;
 
-    @GetMapping
+    @GetMapping("/list")
     public String listBranches(Model model) {
         model.addAttribute("branches", branchService.findAll());
-        return "branch/list";
+        return "branch/branch_list";
     }
 
     @GetMapping("/{id}")
@@ -37,19 +37,19 @@ public class BranchController {
         }
     }
 
-    @GetMapping("/new")
+    @GetMapping("/branch_form")
     public String newBranchForm(Model model) {
         model.addAttribute("branch", new Branch());
-        return "branch/form";
+        return "branch/branch_form";
     }
 
     @PostMapping
     public String saveBranch(@ModelAttribute @Valid Branch branch, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            return "branch/form";
+            return "branch/branch_form";
         }
         branchService.save(branch);
-        return "redirect:/branches";
+        return "redirect:/branch/list";
     }
 
     @GetMapping("/edit/{id}")
@@ -57,7 +57,7 @@ public class BranchController {
         Optional<Branch> branch = branchService.findById(id);
         if (branch.isPresent()) {
             model.addAttribute("branch", branch.get());
-            return "branch/form";
+            return "branch/branch_form";
         } else {
             return "error/404"; // Handle not found error
         }
