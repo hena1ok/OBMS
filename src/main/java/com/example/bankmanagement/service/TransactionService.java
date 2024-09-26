@@ -15,10 +15,14 @@ import java.util.Optional;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
+    private final UserService userService; // Inject UserService to fetch User
+    private final AccountService accountService; // Inject AccountService to fetch Account
 
     @Autowired
-    public TransactionService(TransactionRepository transactionRepository) {
+    public TransactionService(TransactionRepository transactionRepository, UserService userService, AccountService accountService) {
         this.transactionRepository = transactionRepository;
+        this.userService = userService; // Initialize UserService
+        this.accountService = accountService; // Initialize AccountService
     }
 
     public List<Transaction> getAllTransactions() {
@@ -48,26 +52,19 @@ public class TransactionService {
         }
         transactionRepository.deleteById(id);
     }
+
     public List<Transaction> getTransactionsByUserId(Long userId) {
         return transactionRepository.findByUserId(userId); // Assuming you create this method in the repository
     }
 
     public List<Transaction> getTransactionsByAccountId(Long accountId) {
-        return transactionRepository.findByAccountId(accountId); // Assuming you create this method in the repository
+        // You can directly call the repository method with accountId
+        return transactionRepository.findByAccountId(accountId);
     }
+
+
 
     public List<Transaction> getTransactionsByDateRange(LocalDate startDate, LocalDate endDate) {
         return transactionRepository.findByDateBetween(startDate, endDate); // You need to create this method in the repository
     }
-    public Transaction createTransaction(Transaction transaction, Long userId, Long accountId) {
-        // You may want to load the User and Account entities based on IDs
-        User user = UserService.getUserById(userId); // Assuming you have a UserService
-        Account account = AccountService.getAccountById(accountId); // Assuming you have an AccountService
-
-        transaction.setUser(user);
-        transaction.setAccount(account);
-        return transactionRepository.save(transaction);
-    }
-
-
 }

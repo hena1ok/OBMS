@@ -16,8 +16,8 @@ import java.util.Set;
 @Service
 public class UserService {
 
-    private static UserRepository userRepository;
-    private RoleRepository roleRepository;
+	private static UserRepository userRepository;
+ private RoleRepository roleRepository;
     private  PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -28,12 +28,12 @@ public class UserService {
     }
 
     // Fetches all users
-    public List<User> getAllUsers() {
+    public static List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
     // Fetches a user by ID
-    public static User getUserById(Long id) {
+    public User getUserById(Long id) {
         return userRepository.findById(id).orElse(null);
     }
 

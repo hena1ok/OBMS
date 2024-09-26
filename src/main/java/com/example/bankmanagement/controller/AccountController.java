@@ -20,47 +20,48 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-    // View all accounts (HTML page)
+    // View all accounts
     @GetMapping("/account_list")
     public String getAllAccounts(Model model) {
         List<Account> accounts = accountService.getAllAccounts();
         model.addAttribute("accounts", accounts);
-        return "account/account_list";  // This refers to account_list.html
+        return "account/account_list"; // Assuming there is an HTML template for the account list
     }
 
     // Show account creation form
     @GetMapping("/account_form")
     public String showAccountForm(Model model) {
         model.addAttribute("account", new Account());
-        return "account/account_form";  // Refers to account_form.html
+        return "account/account_form"; // Assuming there is an HTML template for the account form
     }
 
     // Handle account form submission
-    @PostMapping("/account_form")  // Make sure this matches your form action URL
+    @PostMapping("/account_form")
     public String createAccount(@ModelAttribute Account account) {
         accountService.createAccount(account);
-        return "redirect:/account/account_list";  // Redirect to the accounts list after creation
+        return "redirect:/account/account_list"; // Redirect to the account list after creation
     }
 
-    // Edit an account form
+ // Show edit form
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
-        Account account = accountService.getAccountById(id);
+        Account account = accountService.getAccountById(id); // Fetch the account directly
         model.addAttribute("account", account);
-        return "account/account_form";  // Refers to account_form.html for editing
+        return "account/account_form"; // Return to the same form for editing
     }
+
 
     // Update account
     @PostMapping("/update/{id}")
     public String updateAccount(@PathVariable Long id, @ModelAttribute Account account) {
         accountService.updateAccount(id, account);
-        return "redirect:/account/account_list";  // Redirect to the accounts list after update
+        return "redirect:/account/account_list"; // Redirect to the account list after updating
     }
 
     // Delete an account
     @GetMapping("/delete/{id}")
     public String deleteAccount(@PathVariable Long id) {
         accountService.deleteAccount(id);
-        return "redirect:/account/account_list";  // Redirect to the accounts list after deletion
+        return "redirect:/account/account_list"; // Redirect to the account list after deletion
     }
 }

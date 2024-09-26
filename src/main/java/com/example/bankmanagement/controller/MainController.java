@@ -40,7 +40,7 @@ public class MainController {
 
     // Handles signup form submission
     @PostMapping("/signup")
-    public String registerUser(@Valid @ModelAttribute("user") User user, BindingResult result, Model model) {
+    public String registerUser(@ModelAttribute("user") User user, BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "signup"; // Return to signup page with errors
         }

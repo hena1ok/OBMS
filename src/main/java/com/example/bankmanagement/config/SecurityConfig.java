@@ -20,15 +20,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf().disable() // Disable CSRF for demonstration; be careful with this in production
+            .csrf().disable()
             .authorizeHttpRequests()
-                .requestMatchers("/signup", "/login").permitAll() // Allow access to these pages
-                .requestMatchers("/transactions/**", "/account/**").authenticated() // Secure these pages
-                .anyRequest().authenticated() // Require authentication for all other requests
+                .requestMatchers("/signup", "/login", "/account/account_form", "/transaction/transaction_form").permitAll() // Allow access to account form
+                .requestMatchers("/account/**", "/transaction/**").authenticated() // Secure account and transaction pages
+                .anyRequest().authenticated()
             .and()
             .formLogin()
                 .loginPage("/login")
-                .defaultSuccessUrl("/home", true)
+                .defaultSuccessUrl("/", true)
                 .failureUrl("/login?error=true")
                 .permitAll()
             .and()

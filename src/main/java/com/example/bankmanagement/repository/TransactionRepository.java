@@ -7,7 +7,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    List<Transaction> findByAccountId(Long accountId);
-    List<Transaction> findByUserId(Long userId); // Assuming you add a User reference in Transaction
-    List<Transaction> findByDateBetween(LocalDate startDate, LocalDate endDate);
+    List<Transaction> findByUserId(Long userId); // Fetch transactions by user ID
+
+    List<Transaction> findBySourceAccountId(Long sourceAccountId); // Fetch transactions by source account ID
+
+    List<Transaction> findByDestinationAccountId(Long destinationAccountId); // Fetch transactions by destination account ID
+
+    List<Transaction> findByDateBetween(LocalDate startDate, LocalDate endDate); // Fetch transactions within a date range
+
+    List<Transaction> findByAccountId(Long accountId); // Fetch transactions by account ID (You may want to change this if necessary)
 }

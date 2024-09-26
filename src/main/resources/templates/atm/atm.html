@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATM Functionality</title>
+</head>
+<body>
+    <h1>ATM Management</h1>
+
+    <h2>Withdraw</h2>
+    <form action="/atm/withdraw" method="post">
+        <input type="text" name="accountNumber" placeholder="Account Number" required>
+        <input type="number" name="amount" placeholder="Amount" required>
+        <button type="submit">Withdraw</button>
+    </form>
+
+    <h2>Deposit</h2>
+    <form action="/atm/deposit" method="post">
+        <input type="text" name="accountNumber" placeholder="Account Number" required>
+        <input type="number" name="amount" placeholder="Amount" required>
+        <button type="submit">Deposit</button>
+    </form>
+
+    <h2>Check Balance</h2>
+    <form action="/atm/balance" method="get">
+        <input type="text" name="accountNumber" placeholder="Account Number" required>
+        <button type="submit">Check Balance</button>
+    </form>
+</body>
+</html>

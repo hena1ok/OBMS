@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +29,16 @@ public class Account {
     @JoinColumn(name = "user_id")
     private User user; // Relationship with User
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    private List<Transaction> transactions = new ArrayList<>(); // List of transactions for this account
+    @OneToMany(mappedBy = "sourceAccount", cascade = CascadeType.ALL)
+    private List<Transaction> sourceTransactions = new ArrayList<>(); // Transactions where this account is the source
+
+    @OneToMany(mappedBy = "destinationAccount", cascade = CascadeType.ALL)
+    private List<Transaction> destinationTransactions = new ArrayList<>(); // Transactions where this account is the destination
+
+    // Default constructor
+    public Account() {
+        // For JPA
+    }
 
     // Getters and Setters
     public Long getId() {
@@ -72,11 +81,64 @@ public class Account {
         this.user = user;
     }
 
-    public List<Transaction> getTransactions() {
-        return transactions;
+    public List<Transaction> getSourceTransactions() {
+        return sourceTransactions;
     }
 
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
+    public void setSourceTransactions(List<Transaction> sourceTransactions) {
+        this.sourceTransactions = sourceTransactions;
+    }
+
+    public List<Transaction> getDestinationTransactions() {
+        return destinationTransactions;
+    }
+
+    public void setDestinationTransactions(List<Transaction> destinationTransactions) {
+        this.destinationTransactions = destinationTransactions;
+    }
+
+    // Method to deposit an amount into the account
+    public void deposit(double amount) {
+        if (amount > 0) {
+            this.balance += amount;
+            // Create and add a deposit transaction
+            Transaction transaction = new Transaction();
+            transaction.setAmount(amount);
+            transaction.setDate(LocalDate.now()); // Set to today's date
+            transaction.setSourceAccount(null); // No source for deposit
+            transaction.setDestinationAccount(this);
+            transaction.setUser(this.user); // Assuming the user is the one making the deposit
+            sourceTransactions.add(transaction);
+        } else {
+            throw new IllegalArgumentException("Deposit amount must be positive");
+        }
+    }
+
+    // Method to withdraw an amount from the account
+    public void withdraw(double amount) {
+        if (amount > 0 && amount <= this.balance) {
+            this.balance -= amount;
+            // Create and add a withdrawal transaction
+            Transaction transaction = new Transaction();
+            transaction.setAmount(-amount); // Negative amount for withdrawal
+            transaction.setDate(LocalDate.now()); // Set to today's date
+            transaction.setSourceAccount(this);
+            transaction.setDestinationAccount(null); // No destination for withdrawal
+            transaction.setUser(this.user); // Assuming the user is the one making the withdrawal
+            sourceTransactions.add(transaction);
+        } else {
+            throw new IllegalArgumentException("Insufficient balance or invalid withdrawal amount");
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", accountNumber='" + accountNumber + '\'' +
+                ", accountType='" + accountType + '\'' +
+                ", balance=" + balance +
+                ", user=" + (user != null ? user.getId() : null) +
+                '}';
     }
 }

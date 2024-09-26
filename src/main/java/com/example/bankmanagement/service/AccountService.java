@@ -11,42 +11,44 @@ import java.util.Optional;
 @Service
 public class AccountService {
 
-    private static AccountRepository accountRepository; // Keep this as an instance variable
+    private final AccountRepository accountRepository;
 
     @Autowired
     public AccountService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
+    
 
+    // Get all accounts
     public List<Account> getAllAccounts() {
         return accountRepository.findAll();
     }
 
-    public static Account getAccountById(Long id) {
-        return accountRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Account not found with id: " + id));
+    // Get account by ID
+    public Account getAccountById(Long accountId) {
+        return accountRepository.findById(accountId)
+                .orElseThrow(() -> new IllegalArgumentException("Account not found with id: " + accountId));
     }
 
-    public void createAccount(Account account) {
-        accountRepository.save(account);
+
+    // Create a new account
+    public Account createAccount(Account account) {
+        return accountRepository.save(account);
     }
 
-    public void updateAccount(Long id, Account updatedAccount) {
-        if (!accountRepository.existsById(id)) {
-            throw new IllegalArgumentException("Account not found with id: " + id);
-        }
-        updatedAccount.setId(id);
-        accountRepository.save(updatedAccount);
+    // Update an existing account
+    public Account updateAccount(Long id, Account accountDetails) {
+        Account account = accountRepository.findById(id).orElseThrow(() -> new RuntimeException("Account not found"));
+        account.setAccountNumber(accountDetails.getAccountNumber());
+        account.setAccountType(accountDetails.getAccountType());
+        account.setBalance(accountDetails.getBalance());
+        return accountRepository.save(account);
     }
 
+    // Delete an account
     public void deleteAccount(Long id) {
-        if (!accountRepository.existsById(id)) {
-            throw new IllegalArgumentException("Account not found with id: " + id);
-        }
         accountRepository.deleteById(id);
     }
+    
 
-    public Optional<Account> findByAccountNumber(String accountNumber) {
-        return accountRepository.findByAccountNumber(accountNumber);
-    }
 }
