@@ -1,95 +1,100 @@
-package com.example.bankmanagement.model;  
+package com.example.bankmanagement.model;
 
-import jakarta.persistence.*;  
-import java.util.Set;  
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import java.util.HashSet;
+import java.util.Set;
 
-@Entity  
-@Table(name = "users")  
-public class User {  
-    @Id  
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  
-    private Long id;  
+@Entity
+@Table(name = "users")
+public class User {
 
-    @Column(nullable = false, unique = true)  
-    private String username;  
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(nullable = false)  
-    private String password;  
-    
-    @Column(nullable = false, unique = true)  
-    private String email;  
+    @NotBlank(message = "Username is required")
+    @Column(nullable = false, unique = true)
+    private String username;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)  
-    private Set<Account> accounts;  
+    @NotBlank(message = "Password is required")
+    @Column(nullable = false)
+    private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)  // Use EAGER or LAZY as needed  
-    @JoinTable(  
-        name = "user_roles",  
-        joinColumns = @JoinColumn(name = "user_id"),  
-        inverseJoinColumns = @JoinColumn(name = "role_id")  
-    )  
-    private Set<Role> roles; // Set of roles associated with the user  
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email should be valid")
+    @Column(nullable = false, unique = true)
+    private String email;
 
-    // Default constructor  
-    public User() {  
-        // Default constructor necessary for JPA  
-    }  
+    // Relationships
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Account> accounts = new HashSet<>();
 
-    // Getters and Setters  
-    public Long getId() {  
-        return id;  
-    }  
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "user_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 
-    public void setId(Long id) {  
-        this.id = id;  
-    }  
+    // Default constructor
+    public User() {}
 
-    public String getUsername() {  
-        return username;  
-    }  
+    // Constructor with fields (if needed)
+    public User(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
 
-    public void setUsername(String username) {  
-        this.username = username;  
-    }  
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
 
-    public String getPassword() {  
-        return password;  
-    }  
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public void setPassword(String password) {  
-        this.password = password;  
-    }  
+    public String getUsername() {
+        return username;
+    }
 
-    public String getEmail() {  
-        return email;  
-    }  
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-    public void setEmail(String email) {  
-        this.email = email;  
-    }  
+    public String getPassword() {
+        return password;
+    }
 
-    public Set<Account> getAccounts() {  
-        return accounts;  
-    }  
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-    public void setAccounts(Set<Account> accounts) {  
-        this.accounts = accounts;  
-    }  
+    public String getEmail() {
+        return email;
+    }
 
-    public Set<Role> getRoles() {  
-        return roles;  
-    }  
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public void setRoles(Set<Role> roles) {  
-        this.roles = roles;  
-    }  
+    public Set<Account> getAccounts() {
+        return accounts;
+    }
 
-    // You may want to add a constructor with parameters  
-    public User(String username, String password, String email, Set<Account> accounts, Set<Role> roles) {  
-        this.username = username;  
-        this.password = password;  
-        this.email = email;  
-        this.accounts = accounts;  
-        this.roles = roles;  
-    }  
+    public void setAccounts(Set<Account> accounts) {
+        this.accounts = accounts;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
 }

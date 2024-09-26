@@ -1,9 +1,6 @@
 package com.example.bankmanagement.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
@@ -24,6 +21,14 @@ public class Transaction {
     private LocalDate date;
 
     private String description;
+
+    @ManyToOne // Assuming each transaction is linked to one account
+    @JoinColumn(name = "account_id", nullable = false)
+    private Account account; // The account associated with the transaction
+
+    @ManyToOne // Assuming each transaction is linked to one user
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user; // The user associated with the transaction
 
     // Getters and Setters
     public Long getId() {
@@ -56,5 +61,21 @@ public class Transaction {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.bankmanagement.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -9,30 +10,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.bankmanagement.model.User;
 import com.example.bankmanagement.service.UserService;
 
-import java.util.Optional;
-
-@Controller
-@RequestMapping("/")
+@Controller("/")
+@RequestMapping
 public class MainController {
 
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder; // Add PasswordEncoder
 
     @Autowired
-    public MainController(UserService userService, PasswordEncoder passwordEncoder) {
+    public MainController(UserService userService) {
         this.userService = userService;
-        this.passwordEncoder = passwordEncoder; // Initialize PasswordEncoder
-    }
-
-    // Redirects to the login page
-    @GetMapping("/")
-    public String redirectToLogin() {
-        return "redirect:/login"; // Redirects to the login page
     }
 
     // Displays the login page
@@ -40,20 +30,6 @@ public class MainController {
     public String showLoginPage(Model model) {
         return "login"; // Renders login.html
     }
-
-    @PostMapping("login")
-    public String login(@RequestParam String email, @RequestParam String password, Model model) {
-        Optional<User> userOptional = userService.findByEmail(email); // Fetch user from the database
-
-        // Check if user exists and password matches
-        if (userOptional.isPresent() && passwordEncoder.matches(password, userOptional.get().getPassword())) {
-            return "redirect:/home"; // Redirect to home page on successful login
-        } else {
-            model.addAttribute("error", "Invalid email or password");
-            return "login"; // Return to login page with error
-        }
-    }
-
 
     // Displays the signup page
     @GetMapping("signup")
@@ -63,17 +39,30 @@ public class MainController {
     }
 
     // Handles signup form submission
-    @PostMapping("signup")
-    public String registerUser(@ModelAttribute User user, BindingResult result) {
+    @PostMapping("/signup")
+    public String registerUser(@Valid @ModelAttribute("user") User user, BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "signup"; // Return to signup page with errors
         }
-        userService.saveUser(user); // Save the user
+
+        if (userService.existsByUsername(user.getUsername())) {
+            result.rejectValue("username", "error.user", "Username is already taken");
+            return "signup";
+        }
+
+        if (userService.existsByEmail(user.getEmail())) {
+            result.rejectValue("email", "error.user", "Email is already in use");
+            return "signup";
+        }
+
+        // Save the user with the default role "ROLE_USER"
+        userService.saveUser(user);
+
         return "redirect:/login"; // Redirect to login page after successful signup
     }
 
     // Displays the homepage after login
-    @GetMapping("home")
+    @GetMapping("/")
     public String showHomePage() {
         return "home"; // Renders home.html
     }

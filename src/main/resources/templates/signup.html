@@ -12,23 +12,38 @@
                 <div class="card mt-5">
                     <div class="card-body">
                         <h3 class="card-title text-center">Sign Up</h3>
-                        <form th:action="@{/signup}" method="post">
+                        <form th:action="@{/signup}" th:object="${user}" method="post">
+                            <!-- Username field -->
                             <div class="form-group">
                                 <label for="username">Username:</label>
-                                <input type="text" class="form-control" id="username" name="username" required>
+                                <input type="text" class="form-control" id="username" th:field="*{username}" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
                             </div>
+
+                            <!-- Email field -->
                             <div class="form-group">
                                 <label for="email">Email:</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
+                                <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                             </div>
+
+                            <!-- Password field -->
                             <div class="form-group">
                                 <label for="password">Password:</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
+                                <input type="password" class="form-control" id="password" th:field="*{password}" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
                             </div>
+
+                            <!-- Submit button -->
                             <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
                         </form>
+
+                        <!-- Login link -->
                         <p class="text-center mt-3">Already have an account? <a th:href="@{/login}">Login here</a></p>
+
+                        <!-- Success or error messages -->
                         <p th:if="${message}" th:text="${message}" class="text-success text-center"></p>
+                        <p th:if="${errorMessage}" th:text="${errorMessage}" class="text-danger text-center"></p>
                     </div>
                 </div>
             </div>
