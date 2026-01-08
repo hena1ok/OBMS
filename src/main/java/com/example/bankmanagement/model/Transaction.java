@@ -4,42 +4,97 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
-import java.time.LocalDate;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
+/**
+ * Represents a financial transaction in the banking system.
+ */
 @Entity
-public class Transaction {
+@Table(name = "transactions") // Explicitly specify the table name
+public class Transaction implements Serializable {
 
+    public enum TransactionType {
+        DEPOSIT, WITHDRAWAL, TRANSFER
+    }
+
+    public enum TransactionStatus {
+        PENDING, COMPLETED, FAILED
+    }
+
+    // Default status and date values
+    private static final TransactionStatus DEFAULT_STATUS = TransactionStatus.PENDING;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull(message = "Amount cannot be null")
     @Positive(message = "Amount must be positive")
-    private Double amount; // The amount of money transferred
+    private BigDecimal amount; // Monetary value of the transaction
 
-    @NotNull(message = "Date cannot be null")
-    private LocalDate date; // Date of the transaction
+    @NotNull(message = "Transaction date cannot be null")
+    private LocalDateTime transactionDate; // Date and time of the transaction
 
     private String description; // Optional description of the transaction
 
-    @ManyToOne // The source account for the transaction
+    @ManyToOne(optional = false) // Mandatory source account
     @JoinColumn(name = "source_account_id", nullable = false)
-    private Account sourceAccount; // The account from which funds are deducted
+    private Account sourceAccount;
 
-    @ManyToOne // The destination account for the transaction
-    @JoinColumn(name = "destination_account_id", nullable = false)
-    private Account destinationAccount; // The account to which funds are added
+    @ManyToOne // Nullable destination account for transfers
+    @JoinColumn(name = "destination_account_id")
+    private Account destinationAccount;
 
-    @ManyToOne // The user associated with the transaction
+    @ManyToOne(optional = false) // Mandatory user initiating the transaction
     @JoinColumn(name = "user_id", nullable = false)
-    private User user; // The user who initiated the transaction
+    private User user;
+
+    @ManyToOne // Optional teller involved in the transaction
+    @JoinColumn(name = "teller_id")
+    private Teller teller;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "transaction_type", nullable = false)
+    private TransactionType transactionType; // Type of transaction
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "transaction_status", nullable = false)
+    private TransactionStatus status; // Status of the transaction
 
     
-    @Column(name = "account_id")
-    private Long accountId;
-    // Default constructor
+    // Default constructor for JPA
     public Transaction() {
-        // For JPA
+        this.transactionDate = LocalDateTime.now(); // Set to now by default
+        this.status = DEFAULT_STATUS; // Default status
+    }
+
+ 
+
+
+
+	public static TransactionStatus getDefaultStatus() {
+		return DEFAULT_STATUS;
+	}
+
+	// Constructor with all fields
+    public Transaction(Long id,
+                      @NotNull(message = "Amount cannot be null") @Positive(message = "Amount must be positive") BigDecimal amount,
+                      @NotNull(message = "Transaction date cannot be null") LocalDateTime transactionDate,
+                      String description, Account sourceAccount, Account destinationAccount, 
+                      User user, Teller teller, 
+                      TransactionType transactionType, TransactionStatus status) {
+        this.id = id;
+        this.amount = amount;
+        this.transactionDate = transactionDate;
+        this.description = description;
+        this.sourceAccount = sourceAccount;
+        this.destinationAccount = destinationAccount;
+        this.user = user;
+        this.teller = teller;
+        this.transactionType = transactionType;
+        this.status = status != null ? status : DEFAULT_STATUS; // Set to default if null
     }
 
     // Getters and Setters
@@ -51,20 +106,20 @@ public class Transaction {
         this.id = id;
     }
 
-    public Double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDateTime getTransactionDate() {
+        return transactionDate;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setTransactionDate(LocalDateTime transactionDate) {
+        this.transactionDate = transactionDate;
     }
 
     public String getDescription() {
@@ -98,26 +153,44 @@ public class Transaction {
     public void setUser(User user) {
         this.user = user;
     }
-    public Transaction(Double amount, LocalDate date, String description, Account sourceAccount, Account destinationAccount, User user) {
-        this.amount = amount;
-        this.date = date;
-        this.description = description;
-        this.sourceAccount = sourceAccount;
-        this.destinationAccount = destinationAccount;
-        this.user = user;
+
+    public Teller getTeller() {
+        return teller;
     }
 
+    public void setTeller(Teller teller) {
+        this.teller = teller;
+    }
+
+    public TransactionType getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(TransactionType transactionType) {
+        this.transactionType = transactionType;
+    }
+
+    public TransactionStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TransactionStatus pending) {
+        this.status = pending;
+    }
 
     @Override
     public String toString() {
         return "Transaction{" +
                 "id=" + id +
                 ", amount=" + amount +
-                ", date=" + date +
+                ", transactionDate=" + transactionDate +
                 ", description='" + description + '\'' +
-                ", sourceAccount=" + (sourceAccount != null ? sourceAccount.getId() : "null") +
-                ", destinationAccount=" + (destinationAccount != null ? destinationAccount.getId() : "null") +
-                ", user=" + (user != null ? user.getId() : "null") +
+                ", sourceAccountId=" + (sourceAccount != null ? sourceAccount.getId() : "null") +
+                ", destinationAccountId=" + (destinationAccount != null ? destinationAccount.getId() : "null") +
+                ", userId=" + (user != null ? user.getId() : "null") +
+                ", tellerId=" + (teller != null ? teller.getTellerId() : "null") +
+                ", transactionType=" + transactionType +
+                ", status=" + status +
                 '}';
     }
 }

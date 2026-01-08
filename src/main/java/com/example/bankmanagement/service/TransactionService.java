@@ -1,13 +1,20 @@
 package com.example.bankmanagement.service;
 
 import com.example.bankmanagement.model.Account;
+import com.example.bankmanagement.model.Teller;
 import com.example.bankmanagement.model.Transaction;
+import com.example.bankmanagement.model.Transaction.TransactionStatus;
+import com.example.bankmanagement.model.Transaction.TransactionType;
 import com.example.bankmanagement.model.User;
+import com.example.bankmanagement.repository.AccountRepository;
 import com.example.bankmanagement.repository.TransactionRepository;
+import com.example.bankmanagement.repository.TellerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,56 +22,62 @@ import java.util.Optional;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
-    private final UserService userService; // Inject UserService to fetch User
-    private final AccountService accountService; // Inject AccountService to fetch Account
+    private final AccountRepository accountRepository;
+    private final TellerRepository tellerRepository;
 
     @Autowired
-    public TransactionService(TransactionRepository transactionRepository, UserService userService, AccountService accountService) {
+    public TransactionService(TransactionRepository transactionRepository, AccountRepository accountRepository, TellerRepository tellerRepository) {
         this.transactionRepository = transactionRepository;
-        this.userService = userService; // Initialize UserService
-        this.accountService = accountService; // Initialize AccountService
+        this.accountRepository = accountRepository;
+        this.tellerRepository = tellerRepository;
     }
 
-    public List<Transaction> getAllTransactions() {
-        return transactionRepository.findAll();
+    public List<Transaction> getRecentTransactions() {
+        return transactionRepository.findTop10ByOrderByTransactionDateDesc(); // Adjust query as necessary
     }
 
-    public Transaction getTransactionById(Long id) {
-        return transactionRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Transaction not found with id: " + id));
+    public long getTotalTransactions() {
+        return transactionRepository.count();
     }
 
-    public void createTransaction(Transaction transaction) {
-        transactionRepository.save(transaction);
-    }
+    @Transactional
+    public Transaction createTransaction(BigDecimal amount, Long sourceAccountId,
+                                          Long destinationAccountId, TransactionType transactionType,
+                                          String description, User user, Long tellerId) {
+        Transaction transaction = new Transaction();
+        transaction.setAmount(amount);
+        transaction.setTransactionDate(LocalDateTime.now());
+        transaction.setTransactionType(transactionType);
+        transaction.setDescription(description);
+        transaction.setUser(user);
 
-    public void updateTransaction(Long id, Transaction updatedTransaction) {
-        if (!transactionRepository.existsById(id)) {
-            throw new IllegalArgumentException("Transaction not found with id: " + id);
+        if (tellerId != null) {
+            Teller teller = tellerRepository.findById(tellerId)
+                    .orElseThrow(() -> new IllegalArgumentException("Teller not found"));
+            transaction.setTeller(teller);
         }
-        updatedTransaction.setId(id);
-        transactionRepository.save(updatedTransaction);
-    }
 
-    public void deleteTransaction(Long id) {
-        if (!transactionRepository.existsById(id)) {
-            throw new IllegalArgumentException("Transaction not found with id: " + id);
+        transaction.setStatus(TransactionStatus.COMPLETED);
+        transaction.setSourceAccount(accountRepository.findById(sourceAccountId)
+                .orElseThrow(() -> new IllegalArgumentException("Source account not found")));
+        
+        if (destinationAccountId != null) {
+            transaction.setDestinationAccount(accountRepository.findById(destinationAccountId)
+                    .orElseThrow(() -> new IllegalArgumentException("Destination account not found")));
         }
-        transactionRepository.deleteById(id);
+
+        return transactionRepository.save(transaction);
     }
 
-    public List<Transaction> getTransactionsByUserId(Long userId) {
-        return transactionRepository.findByUserId(userId); // Assuming you create this method in the repository
+    public List<Transaction> getTransactionsByAccount(Long accountId) {
+        return transactionRepository.findBySourceAccount_Id(accountId);
     }
 
-    public List<Transaction> getTransactionsByAccountId(Long accountId) {
-        // You can directly call the repository method with accountId
-        return transactionRepository.findByAccountId(accountId);
+    public List<Transaction> getTransactionsByUser(Long userId) {
+        return transactionRepository.findByUserId(userId);
     }
 
-
-
-    public List<Transaction> getTransactionsByDateRange(LocalDate startDate, LocalDate endDate) {
-        return transactionRepository.findByDateBetween(startDate, endDate); // You need to create this method in the repository
+    public Optional<Transaction> getTransactionById(Long id) {
+        return transactionRepository.findById(id);
     }
 }

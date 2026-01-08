@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Transaction Details</title>
+    <link rel="stylesheet" href="/css/style.css"> <!-- Link to your CSS -->
+</head>
+<body>
+    <h1>Transaction Details</h1>
+    <div>
+        <p>ID: <span th:text="${transaction.id}"></span></p>
+        <p>Amount: <span th:text="${transaction.amount}"></span></p>
+        <p>Type: <span th:text="${transaction.transactionType}"></span></p>
+        <p>Description: <span th:text="${transaction.description}"></span></p>
+        <p>Date: <span th:text="${transaction.date}"></span></p>
+    </div>
+    <a href="/transactions">Back to All Transactions</a>
+</body>
+</html>

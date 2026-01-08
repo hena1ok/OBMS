@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Staff Registration</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script>
+        // Example of basic client-side validation
+        (function () {
+            'use strict';
+            var forms = document.querySelectorAll('.needs-validation');
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+        })();
+    </script>
+</head>
+
+<body>
+
+    <!-- Include Header based on Role -->
+    <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+        <div th:replace="fragments/admin-header.html"></div>
+    </div>
+    <div th:if="${#authorization.expression('hasRole(''USER'')')}">
+        <div th:replace="fragments/header.html"></div>
+    </div>
+    <div th:if="${#authorization.expression('hasRole(''TELLER'')')}">
+        <div th:replace="fragments/teller-header.html"></div>
+    </div>
+    <div th:if="${#authorization.expression('hasRole(''SUPPORT'')')}">
+        <div th:replace="fragments/support-header.html"></div>
+    </div>
+
+    <div class="container mt-5">
+        <h2>Register Support Staff</h2>
+        <form th:action="@{/support/register}" method="post" class="needs-validation" novalidate>
+            <div class="mb-3">
+                <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="name" name="name" required maxlength="100" placeholder="Enter name">
+                <div class="invalid-feedback">
+                    Please provide the name.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                <input type="email" class="form-control" id="email" name="email" required placeholder="Enter email">
+                <div class="invalid-feedback">
+                    Please provide a valid email.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="phone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="phone" name="phone" required maxlength="15" placeholder="Enter phone number">
+                <div class="invalid-feedback">
+                    Please provide a valid phone number.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="specialization" class="form-label">Specialization</label>
+                <input type="text" class="form-control" id="specialization" name="specialization" maxlength="100" placeholder="Enter specialization (optional)">
+            </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Register</button>
+                <a href="#" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Include Footer -->
+    <div th:replace="fragments/footer.html"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+</body>
+
+</html>

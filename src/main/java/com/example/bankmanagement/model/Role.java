@@ -1,11 +1,15 @@
 package com.example.bankmanagement.model;  
 
-import jakarta.persistence.*;  
+import jakarta.persistence.*;
+
+import java.io.Serializable;
 import java.util.Set;  
 
 @Entity  
 @Table(name = "roles") // Table for roles  
-public class Role {  
+public class Role implements Serializable{  
+	 private static final long serialVersionUID = 1L;
+
 
     @Id  
     @GeneratedValue(strategy = GenerationType.IDENTITY)  

@@ -1,58 +1,140 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title th:text="${account.id != null} ? 'Update Account' : 'Create Account'"></title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+<meta charset="UTF-8">
+<title
+	th:text="${account.id != null} ? 'Update Account' : 'Create Account'"></title>
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+<script>
+        // Function to filter dropdown options based on user input
+        function filterUsers() {
+            const input = document.getElementById('userEmailInput').value.toLowerCase();
+            const userOptions = document.querySelectorAll('#userEmailDropdown option');
+            userOptions.forEach(option => {
+                option.style.display = option.value.toLowerCase().includes(input) ? 'block' : 'none'; // Toggle display
+            });
+        }
+    </script>
 </head>
 <body>
-    <!-- Include the header -->
-    <div th:replace="fragments/header"></div>
+	<!-- Include Header based on Role -->
+	<div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+		<div th:replace="fragments/admin-header.html"></div>
+	</div>
+	<div th:if="${#authorization.expression('hasRole(''USER'')')}">
+		<div th:replace="fragments/header.html"></div>
+	</div>
+	<div th:if="${#authorization.expression('hasRole(''TELLER'')')}">
+		<div th:replace="fragments/teller-header.html"></div>
+	</div>
+	<div th:if="${#authorization.expression('hasRole(''SUPPORT'')')}">
+		<div th:replace="fragments/support-header.html"></div>
+	</div>
 
-    <div class="container mt-5">
-        <h2 th:text="${account.id != null} ? 'Update Account' : 'Create Account'"></h2>
+	<div class="container mt-5">
+		<h2
+			th:text="${account.id != null} ? 'Update Account' : 'Create Account'"></h2>
 
-        <form th:action="@{${account.id != null} ? '/account/update/' + ${account.id} : '/account/account_form'}"
-              method="post" th:object="${account}">
-              
-            <div class="mb-3">
-                <label for="accountNumber" class="form-label">Account Number</label>
-                <input type="text" id="accountNumber" class="form-control" 
-                       th:field="*{accountNumber}" placeholder="Enter Account Number" required />
-            </div>
+		<form
+			th:action="@{${account.id != null} ? '/account/update/' + ${account.id} : '/account/create'}"
+			method="post" th:object="${account}" novalidate
+			class="needs-validation">
 
-            <div class="mb-3">
-                <label for="accountType" class="form-label">Account Type</label>
-                <select id="accountType" class="form-select" th:field="*{accountType}" required>
-                    <option value="" disabled selected>Select Account Type</option>
-                    <option value="Savings">Savings</option>
-                    <option value="Checking">Checking</option>
-                    <!-- Add more account types as needed -->
-                </select>
-            </div>
 
-            <div class="mb-3">
-                <label for="balance" class="form-label">Balance</label>
-                <input type="number" id="balance" class="form-control" 
-                       th:field="*{balance}" placeholder="Enter Balance" required step="0.01" />
-            </div>
+			<!-- User Email Dropdown for ADMIN and TELLER -->
+			<div
+				th:if="${#authorization.expression('hasRole(''ADMIN'')') or #authorization.expression('hasRole(''TELLER'')')}">
+				<div class="mb-3">
+					<label for="userEmail" class="form-label">Select User Email</label>
+					<input type="text" id="userEmailInput" class="form-control mb-2"
+						placeholder="Search User Email" onkeyup="filterUsers()" /> <select
+						id="userEmailDropdown" class="form-select" required
+						onchange="updateHiddenUserId(this)">
+						<option value="" disabled selected>Select User Email</option>
+						<option th:each="user : ${users}" th:value="${user.id}"
+							th:text="${user.email}" style="display: block;"></option>
+					</select>
+					<div class="invalid-feedback">Please select a user email.</div>
+				</div>
+			</div>
 
-            <div class="mb-3">
-                <label for="userId" class="form-label">User ID</label>
-                <input type="text" id="userId" class="form-control" 
-                       th:field="*{user.id}" placeholder="Enter User ID" required />
-            </div>
+			<!-- Hidden input to store selected user ID -->
+			<input type="hidden" id="selectedUserId" th:field="*{user.id}" />
 
-            <div class="d-flex justify-content-between">
-                <button type="submit" class="btn btn-primary" 
-                        th:text="${account.id != null} ? 'Update' : 'Create'">Submit</button>
-                <a class="btn btn-secondary" th:href="@{/account/account_list}">Cancel</a>
-            </div>
-        </form>
-    </div>
 
-    <!-- Include the footer -->
-    <div th:replace="fragments/footer"></div>
+			<div class="mb-3">
+				<label for="accountNumber" class="form-label">Account Number</label>
+				<input type="text" id="accountNumber" class="form-control"
+					th:field="*{accountNumber}" placeholder="Account Number" readonly />
+				<div class="invalid-feedback">Account number is generated
+					automatically.</div>
+			</div>
+
+			<div class="mb-3">
+				<label for="accountName" class="form-label">Account Name</label> <input
+					type="text" id="accountName" class="form-control"
+					th:field="*{accountName}" placeholder="Enter Account Name" required />
+				<div class="invalid-feedback">Please provide an account name.</div>
+			</div>
+
+			<div class="mb-3">
+				<label for="accountType" class="form-label">Account Type</label> <select
+					id="accountType" class="form-select" th:field="*{accountType}"
+					required>
+					<option value="" disabled selected>Select Account Type</option>
+					<option value="Savings">Savings</option>
+					<option value="Checking">Checking</option>
+					<!-- Add more account types as needed -->
+				</select>
+				<div class="invalid-feedback">Please select an account type.</div>
+			</div>
+
+			<div class="mb-3">
+				<label for="balance" class="form-label">Initial Deposit
+					Amount</label> <input type="number" id="balance" class="form-control"
+					th:field="*{balance}" placeholder="Enter Initial Deposit" required
+					step="0.01" />
+				<div class="invalid-feedback">Please enter a valid amount for
+					the initial deposit.</div>
+				<div class="text-danger error-message"
+					th:if="${#fields.hasErrors('balance')}" th:errors="*{balance}"></div>
+			</div>
+
+
+			<div class="mb-3">
+				<label for="dateOpened" class="form-label">Date Opened</label> <input
+					type="date" id="dateOpened" class="form-control"
+					th:field="*{dateOpened}" th:value="${account.dateOpened}" readonly />
+			</div>
+
+			<div class="d-flex justify-content-between">
+				<button type="submit" class="btn btn-primary"
+					th:text="${account.id != null} ? 'Update' : 'Create'">Submit</button>
+				<a class="btn btn-secondary" th:href="@{/account/account_list}">Cancel</a>
+			</div>
+		</form>
+	</div>
+
+	<!-- Include the footer -->
+	<div th:replace="fragments/footer"></div>
+
+	<script>
+    // Function to filter dropdown options based on user input
+    function filterUsers() {
+        const input = document.getElementById('userEmailInput').value.toLowerCase();
+        const userOptions = document.querySelectorAll('#userEmailDropdown option');
+        userOptions.forEach(option => {
+            option.style.display = option.value.toLowerCase().includes(input) ? 'block' : 'none'; // Toggle display
+        });
+    }
+
+    // Function to update hidden user ID when a user is selected
+    function updateHiddenUserId(selectElement) {
+        const selectedValue = selectElement.value; // Get the selected user ID
+        document.getElementById('selectedUserId').value = selectedValue; // Update hidden input
+    }
+</script>
 
 </body>
 </html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>View Transactions</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <h1>View Transactions</h1>
+
+    <form action="#" th:action="@{/transaction/view}" method="get">
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate" name="startDate" th:value="${param.startDate}"/>
+
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate" name="endDate" th:value="${param.endDate}"/>
+
+        <label for="transactionType">Transaction Type:</label>
+        <select id="transactionType" name="transactionType">
+            <option value="">All</option>
+            <option value="DEPOSIT" th:selected="${param.transactionType == 'DEPOSIT'}">Deposit</option>
+            <option value="WITHDRAWAL" th:selected="${param.transactionType == 'WITHDRAWAL'}">Withdrawal</option>
+            <option value="TRANSFER" th:selected="${param.transactionType == 'TRANSFER'}">Transfer</option>
+        </select>
+
+        <button type="submit">Filter</button>
+    </form>
+
+    <h2>Transactions</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Source Account</th>
+                <th>Destination Account</th>
+                <th>Transaction Type</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="transaction : ${transactions}">
+                <td th:text="${transaction.id}"></td>
+                <td th:text="${transaction.sourceAccount}"></td>
+                <td th:text="${transaction.destinationAccount}"></td>
+                <td th:text="${transaction.transactionType}"></td>
+                <td th:text="${transaction.amount}"></td>
+                <td th:text="${transaction.date}"></td>
+                <td>
+                    <a th:href="@{/transaction/edit/{id}(id=${transaction.id})}">Edit</a>
+                    <a th:href="@{/transaction/delete/{id}(id=${transaction.id})}" 
+                       onclick="return confirm('Are you sure you want to delete this transaction?');">Delete</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <a href="/transaction/transaction_form">Create New Transaction</a>
+    <a href="/transaction/transaction_list">View All Transactions</a>
+</body>
+</html>

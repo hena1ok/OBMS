@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Base - Online Bank Management System</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding: 20px;
+            background-color: #f8f9fa; /* Light background for better readability */
+        }
+
+        h1,
+        h2 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        .nav-link {
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+        }
+
+        .list-group-item {
+            transition: background-color 0.3s ease;
+        }
+
+        .list-group-item:hover {
+            background-color: #e2e6ea; /* Light hover effect */
+        }
+    </style>
+</head>
+
+<body>
+ 	<div
+		th:if="${#authorization.expression('hasRole(''SUPPORT'')')}">
+		<div th:replace="fragments/support-header.html"></div>
+	</div>
+    <div class="container">
+        <h1>Knowledge Base</h1>
+        <p>Welcome to the Knowledge Base for the Online Bank Management System. Here you will find answers to common questions and detailed guides on how to use our system effectively.</p>
+
+        <h2>Table of Contents</h2>
+        <ul class="list-group">
+            <li class="list-group-item"><a href="#account-management">Account Management</a></li>
+            <li class="list-group-item"><a href="#transactions">Transactions</a></li>
+            <li class="list-group-item"><a href="#loans">Loans</a></li>
+            <li class="list-group-item"><a href="#atm-services">ATM Services</a></li>
+            <li class="list-group-item"><a href="#troubleshooting">Troubleshooting</a></li>
+            <li class="list-group-item"><a href="#contact-support">Contact Support</a></li>
+        </ul>
+
+        <h2 id="account-management">Account Management</h2>
+        <p>Learn how to manage your accounts, including creating, viewing, and editing account information.</p>
+        <ul class="list-group">
+            <li class="list-group-item"><strong>How to Create a New Account:</strong> Go to the 'Accounts' section and click on 'Create Account'. Fill in the required information and submit.</li>
+            <li class="list-group-item"><strong>How to View Your Account Details:</strong> Navigate to 'Accounts' and select the account you wish to view.</li>
+            <li class="list-group-item"><strong>How to Edit Account Information:</strong> Click on 'Edit' next to your account details and make the necessary changes.</li>
+        </ul>
+
+        <h2 id="transactions">Transactions</h2>
+        <p>Find out how to perform various transactions using the system.</p>
+        <ul class="list-group">
+            <li class="list-group-item"><strong>How to Make a Transaction:</strong> Go to the 'Transactions' section, select the type of transaction, and follow the prompts to complete.</li>
+            <li class="list-group-item"><strong>How to View Transaction History:</strong> Access the 'Transactions' tab and select 'View History' to see your past transactions.</li>
+        </ul>
+
+        <h2 id="loans">Loans</h2>
+        <p>Get information on applying for and managing loans.</p>
+        <ul class="list-group">
+            <li class="list-group-item"><strong>How to Apply for a Loan:</strong> Visit the 'Loans' section, fill out the application form, and submit your request.</li>
+            <li class="list-group-item"><strong>How to View Your Loan Status:</strong> Go to 'Loans' and select 'View My Loans' to check the status of your applications.</li>
+        </ul>
+
+        <h2 id="atm-services">ATM Services</h2>
+        <p>Learn about the ATM services offered through the system.</p>
+        <ul class="list-group">
+            <li class="list-group-item"><strong>How to Use ATM Services:</strong> Navigate to 'ATM Services' to find nearby ATMs and check your transaction limits.</li>
+        </ul>
+
+        <h2 id="troubleshooting">Troubleshooting</h2>
+        <p>Here are solutions to common issues you may encounter.</p>
+        <ul class="list-group">
+            <li class="list-group-item"><strong>Issue: Unable to Login:</strong> Ensure you are entering the correct username and password. If you forgot your password, click on 'Forgot Password' to reset it.</li>
+            <li class="list-group-item"><strong>Issue: Transaction Failed:</strong> Check your account balance and ensure you have sufficient funds for the transaction.</li>
+        </ul>
+
+        <h2 id="contact-support">Contact Support</h2>
+        <p>If you need further assistance, please reach out to our support team.</p>
+        <ul class="list-group">
+            <li class="list-group-item"><strong>Email:</strong> <a href="mailto:support@bankmanagement.com">support@bankmanagement.com</a></li>
+            <li class="list-group-item"><strong>Phone:</strong> <a href="tel:+18005550199">1-800-555-0199</a></li>
+            <li class="list-group-item"><strong>Support Hours:</strong> Monday - Friday, 9 AM - 5 PM (UTC)</li>
+        </ul>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 Online Bank Management System. All rights reserved.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

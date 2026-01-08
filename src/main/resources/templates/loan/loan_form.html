@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apply for Loan</title>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<style>
+.was-validated .form-control:invalid, .form-control.is-invalid {
+	border-color: #dc3545;
+}
+
+.was-validated .form-control:valid, .form-control.is-valid {
+	border-color: #28a745;
+}
+</style>
+</head>
+<body>
+	<!-- Include Header based on Role -->
+	<div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+		<div th:replace="fragments/admin-header.html"></div>
+	</div>
+	<div th:if="${#authorization.expression('hasRole(''USER'')')}">
+		<div th:replace="fragments/header.html"></div>
+	</div>
+	<div th:if="${#authorization.expression('hasRole(''TELLER'')')}">
+		<div th:replace="fragments/teller-header.html"></div>
+	</div>
+	<div th:if="${#authorization.expression('hasRole(''SUPPORT'')')}">
+		<div th:replace="fragments/support-header.html"></div>
+	</div>
+
+	<div class="container mt-5">
+		<h1 class="mb-4">Apply for Loan</h1>
+
+		<!-- Success or error message display -->
+		<div th:if="${successMessage}" class="alert alert-success"
+			role="alert" th:text="${successMessage}"></div>
+		<div th:if="${errorMessage}" class="alert alert-danger" role="alert"
+			th:text="${errorMessage}"></div>
+
+		<!-- Loan Application Form -->
+		<form th:action="@{/loan/apply}" method="post" th:object="${loan}"
+			class="needs-validation" novalidate>
+			<div class="form-group">
+				<label for="amount">Loan Amount</label> <input type="number"
+					class="form-control" id="amount" name="amount" th:field="*{amount}"
+					required min="1" placeholder="Enter loan amount">
+				<div class="invalid-feedback">Please enter a valid loan
+					amount.</div>
+				<div class="text-danger" th:if="${#fields.hasErrors('amount')}"
+					th:errors="*{amount}"></div>
+			</div>
+
+			<div class="form-group">
+				<label for="interestRate">Interest Rate (%)</label> <input
+					type="number" step="0.01" min="0" class="form-control"
+					id="interestRate" name="interestRate" th:field="*{interestRate}"
+					required placeholder="e.g. 7.5">
+				<div class="invalid-feedback">Please enter a valid interest
+					rate.</div>
+				<div class="text-danger"
+					th:if="${#fields.hasErrors('interestRate')}"
+					th:errors="*{interestRate}"></div>
+			</div>
+
+			<div class="form-group">
+				<label for="term">Term (Months)</label> <input type="number" min="1"
+					class="form-control" id="term" name="term" th:field="*{term}"
+					required placeholder="e.g. 12">
+				<div class="invalid-feedback">Please enter the term in months.</div>
+				<div class="text-danger" th:if="${#fields.hasErrors('term')}"
+					th:errors="*{term}"></div>
+			</div>
+
+			<div class="form-group">
+				<label for="duration">Duration (Months)</label> <input type="number"
+					min="1" class="form-control" id="duration" name="duration"
+					th:field="*{duration}" required placeholder="e.g. 24">
+				<div class="invalid-feedback">Please enter the duration in
+					months.</div>
+				<div class="text-danger" th:if="${#fields.hasErrors('duration')}"
+					th:errors="*{duration}"></div>
+			</div>
+
+			<div class="form-group">
+				<label for="loanType">Loan Type</label> <select class="form-control"
+					id="loanType" name="loanType" th:field="*{loanType}" required>
+					<option value="" disabled selected>Select loan type</option>
+					<option th:each="type : ${loanTypes}" th:value="${type}"
+						th:text="${type}"></option>
+				</select>
+				<div class="invalid-feedback">Please select a loan type.</div>
+				<div class="text-danger" th:if="${#fields.hasErrors('loanType')}"
+					th:errors="*{loanType}"></div>
+			</div>
+
+			<div class="form-group">
+				<label for="loanPurpose">Loan Purpose</label> <input type="text"
+					class="form-control" id="loanPurpose" name="loanPurpose"
+					th:field="*{loanPurpose}" required placeholder="Enter purpose">
+				<div class="invalid-feedback">Please enter the loan purpose.</div>
+				<div class="text-danger" th:if="${#fields.hasErrors('loanPurpose')}"
+					th:errors="*{loanPurpose}"></div>
+			</div>
+
+			<button type="submit" class="btn btn-primary">Submit Loan
+				Application</button>
+		</form>
+	</div>
+
+	<!-- Include the footer -->
+	<div th:replace="fragments/footer"></div>
+
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<!-- Client-side validation script -->
+	<script>
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                var forms = document.getElementsByClassName('needs-validation');
+                Array.prototype.forEach.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+
+</body>
+</html>

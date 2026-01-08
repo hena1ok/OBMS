@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Create Transaction</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <script>
+        function toggleDestinationAccount() {
+            const transactionType = document.getElementById('transactionType').value;
+            const destinationAccountDiv = document.getElementById('destinationAccountDiv');
+            const destinationAccountSelect = document.getElementById('destinationAccountId');
+
+            // Show or hide the destination account field based on transaction type
+            if (transactionType === 'TRANSFER') {
+                destinationAccountDiv.style.display = 'block';
+                destinationAccountSelect.setAttribute('required', 'required'); // Make destination account required
+            } else {
+                destinationAccountDiv.style.display = 'none';
+                destinationAccountSelect.removeAttribute('required'); // Remove required attribute if not needed
+            }
+        }
+
+        window.onload = function() {
+            toggleDestinationAccount(); // Adjust the form on page load based on the selected transaction type
+        }
+    </script>
+</head>
+
+<body>
+    <!-- Include Header based on Role -->
+    <div th:replace="${#authorization.expression('hasRole(''ADMIN'')') ? 'fragments/admin-header.html' : 
+                       #authorization.expression('hasRole(''USER'')') ? 'fragments/header.html' :
+                       #authorization.expression('hasRole(''TELLER'')') ? 'fragments/teller-header.html' : 
+                       #authorization.expression('hasRole(''CUSTOMERSERVICE'')') ? 'fragments/customerservice-header.html' : ''}">
+    </div>
+
+    <div class="container mt-5">
+        <h1 class="mb-4">Create Transaction</h1>
+
+        <!-- Display success or error message -->
+        <div th:if="${message}" class="alert alert-success mt-3" role="alert" th:text="${message}"></div>
+        <div th:if="${error}" class="alert alert-danger mt-3" role="alert" th:text="${error}"></div>
+
+        <!-- Transaction creation form -->
+        <form th:action="@{/transactions/create}" method="post" onsubmit="this.querySelector('button[type=submit]').disabled = true;">
+            <!-- Transaction amount -->
+            <div class="form-group">
+                <label for="amount">Amount <span class="text-danger">*</span></label>
+                <input type="number" step="0.01" class="form-control" id="amount" name="amount" required aria-label="Transaction Amount" placeholder="Enter amount">
+                <small class="form-text text-muted">Enter a positive amount.</small>
+            </div>
+
+            <!-- Transaction type selection -->
+            <div class="form-group">
+                <label for="transactionType">Transaction Type <span class="text-danger">*</span></label>
+                <select class="form-control" id="transactionType" name="transactionType" required aria-label="Transaction Type" onchange="toggleDestinationAccount();">
+                    <option value="" disabled selected>Select transaction type</option>
+                    <option value="DEPOSIT">Deposit</option>
+                    <option value="WITHDRAWAL">Withdrawal</option>
+                    <option value="TRANSFER">Transfer</option>
+                </select>
+            </div>
+
+            <!-- Source Account (always required) -->
+            <div class="form-group" id="sourceAccountDiv">
+                <label for="accountId">Source Account <span class="text-danger">*</span></label>
+                <select class="form-control" id="accountId" name="accountId" required aria-label="Source Account">
+                    <option value="" disabled selected>Select your account</option>
+                    <!-- Display user's own accounts -->
+                    <option th:each="account : ${userAccounts}" th:value="${account.id}" th:text="${account.accountNumber}"></option>
+                </select>
+                <small class="form-text text-muted">Your available accounts for deposit/withdrawal or transfer.</small>
+            </div>
+
+            <!-- Destination Account (only visible for transfer) -->
+            <div class="form-group" id="destinationAccountDiv" style="display: none;">
+                <label for="destinationAccountId">Destination Account <span class="text-danger">*</span></label>
+                <select class="form-control" id="destinationAccountId" name="destinationAccountId" aria-label="Destination Account">
+                    <option value="" disabled selected>Select destination account</option>
+                    <!-- Iterate over accounts (for transfer only) -->
+                    <option th:each="account : ${userAccounts}" th:value="${account.id}" th:text="${account.accountNumber}"></option>
+                </select>
+                <small class="form-text text-muted">Required for transfer transactions only.</small>
+            </div>
+
+            <!-- Optional description -->
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3" placeholder="Optional details about the transaction..."></textarea>
+            </div>
+
+            <!-- Submit button -->
+            <button type="submit" class="btn btn-primary">Create Transaction</button>
+        </form>
+
+        <!-- Back to transaction list -->
+        <a class="btn btn-secondary mt-3" th:href="@{/transactions/teller}">Back to Transaction List</a>
+    </div>
+
+    <!-- Include Footer -->
+    <div th:replace="fragments/footer.html"></div>
+
+    <!-- Scripts for Bootstrap and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

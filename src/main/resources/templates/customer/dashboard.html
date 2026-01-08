@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard - Bank Management System</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        /* Sidebar styles */
+        #sidebar {
+            height: 100vh;
+            background-color: #343a40;
+            padding: 10px;
+            position: relative;
+            transition: width 0.3s ease;
+        }
+
+        .sidebar .nav-link {
+            color: #adb5bd;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 4px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
+
+        /* Main content styles */
+        #main-content {
+            transition: margin-left 0.3s ease;
+        }
+
+        .sidebar-collapsed {
+            width: 80px; /* Reduced width for collapsed sidebar */
+        }
+
+        .sidebar-expanded {
+            width: 250px; /* Full width for expanded sidebar */
+        }
+
+        .sidebar-collapsed .nav-link span {
+            display: none;
+        }
+
+        .sidebar-collapsed .nav-link i {
+            margin-right: 0;
+        }
+
+        /* Sidebar toggle button */
+        .sidebar-toggle {
+            position: absolute;
+            top: 20px;
+            right: -40px; /* Positioned to the right of the sidebar */
+            cursor: pointer;
+            background: #007bff; /* Button background */
+            border: none;
+            border-radius: 50%;
+            width: 40px; /* Increased button size */
+            height: 40px; /* Increased button size */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+             z-index: 10; 
+            transition: background-color 0.3s, transform 0.3s; /* Smooth transition for hover and active states */
+        }
+
+        .sidebar-toggle:hover {
+            background-color: #0056b3; /* Darker on hover */
+            transform: scale(1.1); /* Slightly increase size on hover */
+        }
+
+        .rotate-icon {
+            transform: rotate(180deg);
+            transition: transform 0.3s; /* Smooth transition for icon rotation */
+        }
+    </style>
+</head>
+<body>
+    <!-- Include Header -->
+    <div th:replace="fragments/header.html"></div>
+
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <ul class="nav flex-column mt-4">
+                <li class="nav-item mb-3 text-center">
+                    <button class="sidebar-toggle" onclick="toggleSidebar()">
+                        <i class="fas fa-bars" id="toggleIcon"></i>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" th:href="@{/customer/dashboard}">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/transactions/user}">
+                        <i class="fas fa-money-check-alt"></i>
+                        <span>My Transactions</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/loan/list}">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>My Loans</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/account/account_list}">
+                        <i class="fas fa-user-circle"></i>
+                        <span>My Account</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/support/contact}">
+                        <i class="fas fa-life-ring"></i>
+                        <span>Support</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/logout}">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="main-content" id="mainContent">
+            <!-- Hero Section -->
+            <section class="hero text-center">
+                 <h1>Welcome, <span th:text="${username}">User</span>!</h1>
+            
+                <p class="lead">Manage your finances effortlessly.</p>
+                <a href="#services" class="btn btn-primary">Explore Services</a>
+            </section>
+
+            <!-- Services Section -->
+            <section id="services" class="py-5">
+                <div class="container text-center">
+                    <h2 class="mb-4">Our Services</h2>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Personal Banking</h5>
+                                    <p class="card-text">Manage your personal accounts with ease.</p>
+                                    <a th:href="@{/account/account_list}" class="btn btn-secondary">View Accounts</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Business Banking</h5>
+                                    <p class="card-text">Specialized banking services for your business needs.</p>
+                                    <a th:href="@{/account/account_list}" class="btn btn-secondary">View Accounts</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Loans and Mortgages</h5>
+                                    <p class="card-text">Flexible loan options to meet your needs.</p>
+                                    <a th:href="@{/loan/list}" class="btn btn-secondary">View Loans</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Loan Services Section -->
+            <section id="loan-services" class="py-5 bg-light">
+                <div class="container text-center">
+                    <h2>Loan Services</h2>
+                    <p>Explore various loan options tailored to your financial needs.</p>
+                    <a th:href="@{/loan/apply}" class="btn btn-primary">Apply for a Loan</a>
+                </div>
+            </section>
+
+            <!-- ATM & Transactions Section -->
+            <section id="atm-transactions" class="py-5">
+                <div class="container text-center">
+                    <h2>ATM & Transactions</h2>
+                    <div class="row">
+                        <div class="col-lg-6 mb-4">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">ATM Services</h5>
+                                    <p class="card-text">Find ATMs near you and access your money anytime.</p>
+                                    <a th:href="@{/atm/list}" class="btn btn-secondary">Find ATM Locations</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 mb-4">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Transaction History</h5>
+                                    <p class="card-text">View your detailed transaction history.</p>
+                                    <a th:href="@{/transactions/user}" class="btn btn-secondary">View Transactions</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Section -->
+            <section id="about" class="py-5 bg-light">
+                <div class="container text-center">
+                    <h2>About Us</h2>
+                    <p>Learn more about our bank and our mission to provide excellent service.</p>
+                    <a th:href="@{/about}" class="btn btn-primary">Learn More</a>
+                </div>
+            </section>
+
+            <!-- Contact Section -->
+            <section id="contact" class="py-5">
+                <div class="container text-center">
+                    <h2>Contact Us</h2>
+                    <p>If you have any questions or need assistance, reach out to us!</p>
+                    <a th:href="@{/support/contact}" class="btn btn-secondary">Contact Support</a>
+                </div>
+            </section>
+        </div>
+    </div>
+	<!-- Include the footer -->
+	<div th:replace="fragments/footer"></div>
+
+  
+   
+  <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleIcon = document.getElementById('toggleIcon');
+
+            // Toggle classes to collapse or expand the sidebar
+            sidebar.classList.toggle('sidebar-collapsed');
+            sidebar.classList.toggle('sidebar-expanded');
+
+            // Rotate the icon based on sidebar state
+            toggleIcon.classList.toggle('rotate-icon');
+        }
+    </script>
+</body>
+</html>

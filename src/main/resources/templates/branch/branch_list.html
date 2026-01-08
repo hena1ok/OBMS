@@ -1,50 +1,71 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Branch List</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<title>Branch List</title>
+<link
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+	rel="stylesheet">
 </head>
 <body>
-    <!-- Include the header -->
-    <div th:replace="fragments/header"></div>
+	<!-- Include Header based on Role -->
+	<div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+		<div th:replace="fragments/admin-header.html"></div>
+	</div>
+	<div th:if="${#authorization.expression('hasRole(''USER'')')}">
+		<div th:replace="fragments/header.html"></div>
+	</div>
+	<div th:if="${#authorization.expression('hasRole(''TELLER'')')}">
+		<div th:replace="fragments/teller-header.html"></div>
+	</div>
+	<div
+		th:if="${#authorization.expression('hasRole(''CUSTOMERSERVICE'')')}">
+		<div th:replace="fragments/customerservice-header.html"></div>
+	</div>
+	<div class="container">
+		<h1 class="mt-4">Branch List</h1>
+		<a href="/branch/branch_form" class="btn btn-primary mb-3">Add New
+			Branch</a>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Name</th>
+					<th>Address</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="branch : ${branches}">
+					<td th:text="${branch.id}"></td>
+					<td th:text="${branch.name}"></td>
+					<td th:text="${branch.address}"></td>
+					<td>
+						<!-- Only users with ROLE_ADMIN can perform these actions --> 
+						 <a
+						th:href="@{/branch/edit/{id}(id=${branch.id})}"
+						class="btn btn-warning btn-sm"
+						sec:authorize="hasRole('ROLE_ADMIN')">Edit</a>
+						<form th:action="@{/branch/delete/{id}(id=${branch.id})}"
+							method="post" style="display: inline;"
+							sec:authorize="hasRole('ROLE_ADMIN')">
+							<button type="submit" class="btn btn-danger btn-sm"
+								onclick="return confirm('Are you sure you want to delete this branch?');">Delete</button>
+						</form>
+					</td>
 
-    <div class="container">
-        <h1 class="mt-4">Branch List</h1>
-        <a href="/branch/branch_form" class="btn btn-primary mb-3">Add New Branch</a>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Address</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="branch : ${branches}">
-                    <td th:text="${branch.id}"></td>
-                    <td th:text="${branch.name}"></td>
-                    <td th:text="${branch.address}"></td>
-                    <td>
-                        <a th:href="@{/branch/{id}(id=${branch.id})}" class="btn btn-info">View</a>
-                        <a th:href="@{/branch/edit/{id}(id=${branch.id})}" class="btn btn-warning">Edit</a>
-                        <form th:action="@{/branch/delete/{id}(id=${branch.id})}" method="post" style="display:inline;">
-                            <button type="submit" class="btn btn-danger" 
-                                    onclick="return confirm('Are you sure you want to delete this branch?');">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(branches)}">
-                    <td colspan="4" class="text-center">No branches found.</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+				</tr>
+				<tr th:if="${#lists.isEmpty(branches)}">
+					<td colspan="4" class="text-center">No branches found.</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 
-    <!-- Include the footer -->
-    <div th:replace="fragments/footer"></div>
+	<!-- Include the footer -->
+	<div th:replace="fragments/footer"></div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

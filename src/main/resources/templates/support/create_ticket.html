@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Support Ticket</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+
+    <script>
+        // Client-side validation
+        (function () {
+            'use strict';
+            var forms = document.querySelectorAll('.needs-validation');
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+
+        // Function to set the selected support staff ID
+        function setSupportId() {
+            const select = document.getElementById('supportStaff');
+            const hiddenInput = document.getElementById('hiddenSupportId');
+            hiddenInput.value = select.value;
+        }
+    </script>
+</head>
+
+<body>
+
+    <!-- Include Header based on Role -->
+    <div th:replace="fragments/header-role-based.html :: header"></div>
+
+    <div class="container mt-5">
+        <h2>Create Support Ticket</h2>
+
+        <!-- Error or success messages -->
+        <div th:if="${error}" class="alert alert-danger" role="alert">
+            <p th:text="${error}"></p>
+        </div>
+        <div th:if="${message}" class="alert alert-success" role="alert">
+            <p th:text="${message}"></p>
+        </div>
+
+        <form th:action="@{/support/create_ticket}" method="post" th:object="${ticket}" class="needs-validation" novalidate onsubmit="setSupportId()">
+
+            <!-- Issue Details -->
+            <div class="mb-3">
+                <label for="issueDetails" class="form-label">Issue Details <span class="text-danger">*</span></label>
+                <textarea class="form-control" id="issueDetails" th:field="*{issueDetails}" rows="4" required maxlength="500" placeholder="Please describe your issue..."></textarea>
+                <div class="invalid-feedback">Please provide the issue details.</div>
+                <div th:if="${#fields.hasErrors('issueDetails')}" class="text-danger" th:errors="*{issueDetails}"></div>
+            </div>
+
+            <!-- Support Staff Selection -->
+            <div class="mb-3">
+                <label for="supportStaff" class="form-label">Assign Support Staff <span class="text-danger">*</span></label>
+                <select name="selectedUserId" class="form-select" id="supportStaff" required>
+                    <option value="" disabled selected>Select a support staff member</option>
+                    <option th:each="staff : ${supportStaffList}" th:value="${staff.supportId}" th:text="${staff.name}"></option>
+                </select>
+                <div class="invalid-feedback">Please select a support staff member.</div>
+                <div th:if="${#fields.hasErrors('supportStaff')}" class="text-danger" th:errors="*{supportStaff}"></div>
+            </div>
+
+            <!-- Hidden Input to store selected support staff ID -->
+            <input type="hidden" id="hiddenSupportId" th:field="*{supportId}" />
+
+            <!-- Submit Button -->
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Create Ticket</button>
+                <a href="#" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Include Footer -->
+    <div th:replace="fragments/footer.html"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+</body>
+
+</html>

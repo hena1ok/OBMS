@@ -1,6 +1,7 @@
 package com.example.bankmanagement.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.util.Map;
 
 @Entity
@@ -11,19 +12,27 @@ public class ATM {
     private Long id;
 
     @Column(nullable = false)
+    @NotBlank(message = "Location is required")
     private String location;  // ATM's physical location
 
     @Column(nullable = false)
+    @NotNull(message = "Cash available is required")
+    @Min(value = 0, message = "Cash available must be non-negative")
     private Double cashAvailable;  // Total cash available in the ATM
 
     @Column(nullable = false)
+    @NotNull(message = "Max withdrawal per transaction is required")
+    @Min(value = 0, message = "Max withdrawal must be non-negative")
     private Double maxWithdrawalPerTransaction;  // Maximum allowed per withdrawal
 
     @Column(nullable = false)
+    @NotNull(message = "Daily withdrawal limit is required")
+    @Min(value = 0, message = "Daily withdrawal limit must be non-negative")
     private Double dailyWithdrawalLimit;  // Daily withdrawal limit for the ATM
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status;  // Operational status: "online", "offline", "maintenance"
+    private Status status;  // Operational status
 
     @ElementCollection
     @CollectionTable(name = "atm_cash_denominations", joinColumns = @JoinColumn(name = "atm_id"))
@@ -31,12 +40,14 @@ public class ATM {
     @Column(name = "count")
     private Map<Integer, Integer> cashDenominations;  // Breakdown of cash by denominations (e.g., $10, $20)
 
-    // Constructors, getters, setters
-
+    // Default constructor
     public ATM() {
+    	
     }
+    
 
-    public ATM(String location, Double cashAvailable, Double maxWithdrawalPerTransaction, Double dailyWithdrawalLimit, String status, Map<Integer, Integer> cashDenominations) {
+    // Constructor for creating a new ATM
+    public ATM(String location, Double cashAvailable, Double maxWithdrawalPerTransaction, Double dailyWithdrawalLimit, Status status, Map<Integer, Integer> cashDenominations) {
         this.location = location;
         this.cashAvailable = cashAvailable;
         this.maxWithdrawalPerTransaction = maxWithdrawalPerTransaction;
@@ -44,6 +55,8 @@ public class ATM {
         this.status = status;
         this.cashDenominations = cashDenominations;
     }
+
+    // Getters and Setters
 
     public Long getId() {
         return id;
@@ -85,11 +98,11 @@ public class ATM {
         this.dailyWithdrawalLimit = dailyWithdrawalLimit;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -103,14 +116,14 @@ public class ATM {
 
     @Override
     public String toString() {
-        return "ATM{" +
-                "id=" + id +
-                ", location='" + location + '\'' +
-                ", cashAvailable=" + cashAvailable +
-                ", maxWithdrawalPerTransaction=" + maxWithdrawalPerTransaction +
-                ", dailyWithdrawalLimit=" + dailyWithdrawalLimit +
-                ", status='" + status + '\'' +
-                ", cashDenominations=" + cashDenominations +
-                '}';
+        return String.format("ATM[id=%d, location='%s', cashAvailable=%.2f, maxWithdrawalPerTransaction=%.2f, dailyWithdrawalLimit=%.2f, status=%s, cashDenominations=%s]",
+                id, location, cashAvailable, maxWithdrawalPerTransaction, dailyWithdrawalLimit, status, cashDenominations);
+    }
+
+    // Enum for ATM status
+    public enum Status {
+        ONLINE,
+        OFFLINE,
+        MAINTENANCE
     }
 }

@@ -11,35 +11,42 @@
 
     <div class="container mt-5">
         <h1 class="mb-4">Accounts</h1>
-        <a href="/account/account_form" class="btn btn-primary mb-3">Create New Account</a>
+
+        <!-- Flash Messages -->
+        <div th:if="${successMessage}" class="alert alert-success" role="alert" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
 
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>ID</th>
+                    <th>Account Name</th>
                     <th>Account Number</th>
                     <th>Account Type</th>
                     <th>Balance</th>
-                    <th>Actions</th>
+                    <th>Actions</th> <!-- 6 columns total -->
                 </tr>
             </thead>
             <tbody>
                 <tr th:each="account : ${accounts}">
                     <td th:text="${account.id}"></td>
+                    <td th:text="${account.accountName}"></td>
                     <td th:text="${account.accountNumber}"></td>
                     <td th:text="${account.accountType}"></td>
-                    <td th:text="${#numbers.formatDecimal(account.balance, 2, 2)}"></td> <!-- Format balance to 2 decimal places -->
+                    <td th:text="${#numbers.formatDecimal(account.balance, 2, 2)}"></td>
                     <td>
                         <a th:href="@{/account/edit/{id}(id=${account.id})}" class="btn btn-warning btn-sm">Edit</a>
-                        <a th:href="@{/account/delete/{id}(id=${account.id})}" class="btn btn-danger btn-sm" 
+                        <a th:href="@{/account/delete/{id}(id=${account.id})}" class="btn btn-danger btn-sm"
                            onclick="return confirm('Are you sure you want to delete this account?');">Delete</a>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(accounts)}">
-                    <td colspan="5" class="text-center">No accounts found.</td>
+                    <td colspan="6" class="text-center">No accounts found.</td> <!-- Notice: colspan="6" -->
                 </tr>
             </tbody>
         </table>
+
+        <a href="/account/create" class="btn btn-primary mb-3">Create New Account</a>
     </div>
 
     <!-- Include the footer -->

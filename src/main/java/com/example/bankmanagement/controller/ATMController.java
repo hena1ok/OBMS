@@ -2,11 +2,15 @@ package com.example.bankmanagement.controller;
 
 import com.example.bankmanagement.model.ATM;
 import com.example.bankmanagement.service.ATMService;
-import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -14,55 +18,89 @@ import java.util.List;
 @RequestMapping("/atm")
 public class ATMController {
 
+    private static final Logger logger = LoggerFactory.getLogger(ATMController.class);
     private final ATMService atmService;
 
+    @Autowired
     public ATMController(ATMService atmService) {
         this.atmService = atmService;
     }
 
-    // Display list of all ATMs
     @GetMapping("/list")
-    public String listATMs(Model model) {
-        List<ATM> atms = atmService.getAllATMs();
+    public String listAtms(Model model) {
+        List<ATM> atms = atmService.findAll();
+        logger.info("Fetched {} ATMs", atms.size());
         model.addAttribute("atms", atms);
-        return "atm/atm_list"; // Path to ATM list HTML page
+        return "atm/atm_list";
     }
 
-    // Show form for creating or editing an ATM
+    // Display form for adding a new ATM
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/form")
-    public String showATMForm(@RequestParam(required = false) Long id, Model model) {
-        ATM atm;
-        if (id != null) {
-            atm = atmService.getATMById(id); // Get existing ATM for editing
-        } else {
-            atm = new ATM(); // Create new ATM if no ID is provided
+    public String showAddATMForm(Model model) {
+        model.addAttribute("atm", new ATM());
+        return "atm/atm_form";  // Return to the ATM form view
+    }
+
+    // Handle submission of new ATM
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/form")
+    public String addATM(@ModelAttribute ATM atm, BindingResult result, RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            logger.error("Validation errors occurred while adding ATM: {}", result.getAllErrors());
+            return "atm/atm_form"; // Return to the form with error messages
+        }
+        atmService.save(atm);
+        redirectAttributes.addFlashAttribute("successMessage", "ATM added successfully!");
+        logger.info("Added new ATM with ID: {}", atm.getId());
+        return "redirect:/atm/list";  // Redirect to the ATM list after saving
+    }
+
+    // Display form for editing an existing ATM
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/form/{id}")
+    public String showEditATMForm(@PathVariable Long id, Model model) {
+        ATM atm = findATMById(id);
+        if (atm == null) {
+            return "error/404";  // Redirect to a not found page
         }
         model.addAttribute("atm", atm);
-        return "atm/atm_form"; // Path to ATM form HTML page
+        return "atm/atm_form";  // Return to the ATM form view
     }
 
-    // Handle the creation or update of an ATM
-    @PostMapping("/createOrUpdate")
-    public String createOrUpdateATM(@ModelAttribute @Valid ATM atm, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "atm/atm_form"; // Return to form if there are validation errors
+    // Handle submission of updated ATM
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/form/{id}")
+    public String updateATM(@PathVariable Long id, @ModelAttribute ATM atm, BindingResult result, RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            logger.error("Validation errors occurred while updating ATM with ID {}: {}", id, result.getAllErrors());
+            atm.setId(id); // Ensure the ID is set for the form submission
+            return "atm/atm_form"; // Return to the form with error messages
         }
-        atmService.createOrUpdateATM(atm);
-        return "redirect:/atm/list"; // Redirect to ATM list after creation/update
+        atm.setId(id);
+        atmService.save(atm);
+        redirectAttributes.addFlashAttribute("successMessage", "ATM updated successfully!");
+        logger.info("Updated ATM with ID: {}", id);
+        return "redirect:/atm/list";  // Redirect to the ATM list after updating
     }
 
-    // Show ATM details
-    @GetMapping("/{id}")
-    public String showATMDetails(@PathVariable Long id, Model model) {
-        ATM atm = atmService.getATMById(id);
-        model.addAttribute("atm", atm);
-        return "atm/atm_details"; // Path to ATM details HTML page
-    }
-
-    // Delete ATM
+    // Handle ATM deletion
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/delete/{id}")
-    public String deleteATM(@PathVariable Long id) {
-        atmService.deleteATM(id);
-        return "redirect:/atm/list"; // Redirect to ATM list after deletion
+    public String deleteATM(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        if (atmService.findById(id) != null) {
+            atmService.deleteById(id);
+            redirectAttributes.addFlashAttribute("successMessage", "ATM deleted successfully!");
+            logger.info("Deleted ATM with ID: {}", id);
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "ATM not found for deletion!");
+            logger.warn("Attempted to delete non-existing ATM with ID: {}", id);
+        }
+        return "redirect:/atm/list";  // Redirect to the ATM list after deletion
+    }
+
+    // Helper method to find an ATM by ID
+    private ATM findATMById(Long id) {
+        return atmService.findById(id);
     }
 }

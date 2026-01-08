@@ -1,0 +1,42 @@
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    width: 90%;
+    margin: auto;
+    overflow: hidden;
+}
+h1, h2, h3 {
+    color: #333;
+}
+.test-pass {
+    color: green;
+    font-weight: bold;
+}
+.test-fail {
+    color: red;
+    font-weight: bold;
+}
+.test-warning {
+    color: orange;
+    font-weight: bold;
+}
+.test-case {
+    background: #fff;
+    margin: 10px 0;
+    padding: 10px;
+    border-left: 5px solid #ccc;
+}
+footer {
+    text-align: center;
+    padding: 20px;
+    background: #333;
+    color: #fff;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
