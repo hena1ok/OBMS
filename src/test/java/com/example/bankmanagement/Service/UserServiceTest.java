@@ -55,7 +55,6 @@ class UserServiceTest {
 
     @BeforeAll
     void setupReport() {
-    	
         extent = ExtentReportManager.getInstance();
     }
     
@@ -63,7 +62,6 @@ class UserServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         userService = new UserService(userRepository, roleRepository, passwordEncoder, accountRepository);
-        
     }
 
   
@@ -197,7 +195,7 @@ class UserServiceTest {
     }
 
     private void runTest(String testName, Runnable testLogic) {
-    	test = ExtentReportManager.createTest(testName, "Service Layer", "UserService");
+        test = extent.createTest(testName);
         try {
             testLogic.run();
             test.pass("✅ Test passed successfully");
@@ -212,7 +210,7 @@ class UserServiceTest {
 
     @AfterAll
     void flushReport() {
-    	ExtentReportManager.flushReports();
+        extent.flush();
         System.out.println("✅ UserServiceTest report generated.");
     }
 }

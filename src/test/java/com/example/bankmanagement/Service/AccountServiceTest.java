@@ -264,12 +264,12 @@ class AccountServiceTest {
 
     @AfterAll
     public void flushReport() {
-    	 ExtentReportManager.flushReports();
+        extent.flush();
         System.out.println("✅ TransactionServiceTest report generated.");
     }
 
     private void runTest(String testName, Runnable testLogic) {
-    	test = ExtentReportManager.createTest(testName, "Service Layer", "AccountService");
+        test = extent.createTest(testName);
         try {
             testLogic.run();
             test.pass("✅ Test passed successfully");
